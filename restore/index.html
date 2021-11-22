@@ -755,9 +755,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prepare-the-new-server" class="md-nav__link">
-    Prepare the new server
+  <a href="#install-the-new-server" class="md-nav__link">
+    Install the new server
   </a>
+  
+    <nav class="md-nav" aria-label="Install the new server">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run-updates-on-os" class="md-nav__link">
+    Run Updates on OS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-linux-user" class="md-nav__link">
+    Create a linux user
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setup-the-firewall-optional-but-highly-recommended" class="md-nav__link">
+    Setup the firewall (optional but highly recommended)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1214,9 +1241,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#prepare-the-new-server" class="md-nav__link">
-    Prepare the new server
+  <a href="#install-the-new-server" class="md-nav__link">
+    Install the new server
   </a>
+  
+    <nav class="md-nav" aria-label="Install the new server">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run-updates-on-os" class="md-nav__link">
+    Run Updates on OS
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-a-linux-user" class="md-nav__link">
+    Create a linux user
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setup-the-firewall-optional-but-highly-recommended" class="md-nav__link">
+    Setup the firewall (optional but highly recommended)
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1257,21 +1311,86 @@
 <p>The restore script will always restore to the latest available RMM version on github.</p>
 <p>Make sure you update your old RMM to the latest version using the <code>update.sh</code> script and then run a fresh backup to use with this restore script.</p>
 </div>
-<h2 id="prepare-the-new-server">Prepare the new server<a class="headerlink" href="#prepare-the-new-server" title="Permanent link">&para;</a></h2>
-<p>Create the same exact linux user account as you did when you installed the original server.</p>
-<p>Add it to the sudoers group and setup the firewall.</p>
-<p>Refer to the <a href="../install_server/">installation instructions</a> for steps on how to do all of the above.</p>
+<h2 id="install-the-new-server">Install the new server<a class="headerlink" href="#install-the-new-server" title="Permanent link">&para;</a></h2>
+<h3 id="run-updates-on-os">Run Updates on OS<a class="headerlink" href="#run-updates-on-os" title="Permanent link">&para;</a></h3>
+<p>SSH into the server as <strong>root</strong>.</p>
+<p>Download and run the prereqs and latest updates</p>
+<div class="codehilite"><pre><span></span><code>apt update
+apt install -y wget curl sudo
+apt -y upgrade
+</code></pre></div>
+
+<p>If a new kernel is installed, then reboot the server with the <code>reboot</code> command</p>
+<h3 id="create-a-linux-user">Create a linux user<a class="headerlink" href="#create-a-linux-user" title="Permanent link">&para;</a></h3>
+<p>Create a linux user named <code>tactical</code> to run the rmm and add it to the sudoers group.</p>
+<p><strong>For Ubuntu</strong>:</p>
+<div class="codehilite"><pre><span></span><code>adduser tactical
+usermod -a -G sudo tactical
+</code></pre></div>
+
+<p><strong>For Debian</strong>:</p>
+<div class="codehilite"><pre><span></span><code>useradd -m -s /bin/bash tactical
+usermod -a -G sudo tactical
+</code></pre></div>
+
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><a href="https://linuxconfig.org/configure-sudo-without-password-on-ubuntu-20-04-focal-fossa-linux">Enable passwordless sudo to make your life easier in the future</a></p>
+</div>
+<h3 id="setup-the-firewall-optional-but-highly-recommended">Setup the firewall (optional but highly recommended)<a class="headerlink" href="#setup-the-firewall-optional-but-highly-recommended" title="Permanent link">&para;</a></h3>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Skip this step if your VM is <strong>not</strong> publicly exposed to the world e.g. running behind NAT. You should setup the firewall rules in your router instead (ports 22, 443 and 4222 TCP).</p>
+</div>
+<div class="codehilite"><pre><span></span><code>ufw default deny incoming
+ufw default allow outgoing
+ufw allow https
+ufw allow proto tcp from any to any port <span class="m">4222</span>
+</code></pre></div>
+
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>SSH (port 22 tcp) is only required for you to remotely login and do basic linux server administration for your rmm. It is not needed for any agent communication.<br/></p>
+</div>
+<p>Allow ssh from everywhere (<strong>not</strong> recommended)</p>
+<div class="codehilite"><pre><span></span><code>ufw allow ssh
+</code></pre></div>
+
+<p>Allow ssh from only allowed IP's (<strong>highly</strong> recommended)</p>
+<div class="codehilite"><pre><span></span><code>ufw allow proto tcp from X.X.X.X to any port <span class="m">22</span>
+ufw allow proto tcp from X.X.X.X to any port <span class="m">22</span>
+</code></pre></div>
+
+<p>Enable and activate the firewall</p>
+<div class="codehilite"><pre><span></span><code>ufw <span class="nb">enable</span> <span class="o">&amp;&amp;</span> ufw reload
+</code></pre></div>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You will never login to the server again as <code>root</code> again unless something has gone horribly wrong, and you're working with the developers.</p>
+</div>
 <h2 id="change-dns-a-records">Change DNS A records<a class="headerlink" href="#change-dns-a-records" title="Permanent link">&para;</a></h2>
 <p>Open the DNS manager of wherever your domain is hosted.</p>
 <p>Change the 3 A records <code>rmm</code>, <code>api</code> and <code>mesh</code> and point them to the public IP of your new server.</p>
 <h2 id="run-the-restore-script">Run the restore script<a class="headerlink" href="#run-the-restore-script" title="Permanent link">&para;</a></h2>
+<ol>
+<li>
+<p>Make sure you're logged in with the non-root user (eg <code>tactical</code>)</p>
+</li>
+<li>
 <p>Copy the backup tar file you created during <a href="../backup/">backup</a> to the new server.</p>
+</li>
+<li>
 <p>Download the restore script.</p>
+</li>
+</ol>
 <div class="codehilite"><pre><span></span><code>wget https://raw.githubusercontent.com/wh1te909/tacticalrmm/master/restore.sh
 chmod +x restore.sh
 </code></pre></div>
 
-<p>Call the restore script, passing it the backup file as the first argument:</p>
+<ol>
+<li>Call the restore script, passing it the backup file as the first argument:</li>
+</ol>
 <div class="codehilite"><pre><span></span><code>./restore.sh rmm-backup-XXXXXXXXX.tar
 </code></pre></div>
                 

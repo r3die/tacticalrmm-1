@@ -1297,7 +1297,7 @@ chmod +x update.sh
 <div class="codehilite"><pre><span></span><code>./update.sh --force
 </code></pre></div>
 
-<p>This is usefull for a botched update that might have not completed fully.</p>
+<p>This is useful for a botched update that might have not completed fully.</p>
 <p>The update script will also fix any permissions that might have gotten messed up during a botched update, or if you accidentally ran the update script as the <code>root</code> user.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -1314,7 +1314,7 @@ chmod +x update.sh
 <div class="codehilite"><pre><span></span><code>sudo certbot certonly --manual -d *.example.com --agree-tos --no-bootstrap --manual-public-ip-logging-ok --preferred-challenges dns -m admin@example.com --no-eff-email
 </code></pre></div>
 
-<p>Same instructions as during install for <a href="../install_server/#deploy-the-txt-record-in-your-dns-manager">verifying the TXT record</a> has propogated before hitting Enter.</p>
+<p>Same instructions as during install for <a href="../install_server/#deploy-the-txt-record-in-your-dns-manager">verifying the TXT record</a> has propagated before hitting Enter.</p>
 <p>After this you have renewed the cert, simply run the <code>update.sh</code> script, passing it the <code>--force</code> flag.</p>
 <div class="codehilite"><pre><span></span><code>./update.sh --force
 </code></pre></div>

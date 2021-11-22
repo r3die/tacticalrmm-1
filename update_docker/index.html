@@ -1256,7 +1256,7 @@ sudo docker-compose up -d --remove-orphans
 <div class="codehilite"><pre><span></span><code>sudo certbot certonly --manual -d *.example.com --agree-tos --no-bootstrap --manual-public-ip-logging-ok --preferred-challenges dns -m admin@example.com --no-eff-email
 </code></pre></div>
 
-<p>Verify the domain with the TXT record. Once issued, run the below commands to base64 encode the certificates and add then to the .env file</p>
+<p>Verify the domain with the TXT record. Once issued, run the below commands to base64 encode the certificates and add them to the .env file</p>
 <div class="codehilite"><pre><span></span><code><span class="nb">echo</span> <span class="s2">&quot;CERT_PUB_KEY=</span><span class="k">$(</span>sudo base64 -w <span class="m">0</span> /etc/letsencrypt/live/<span class="si">${</span><span class="nv">rootdomain</span><span class="si">}</span>/fullchain.pem<span class="k">)</span><span class="s2">&quot;</span> &gt;&gt; .env
 <span class="nb">echo</span> <span class="s2">&quot;CERT_PRIV_KEY=</span><span class="k">$(</span>sudo base64 -w <span class="m">0</span> /etc/letsencrypt/live/<span class="si">${</span><span class="nv">rootdomain</span><span class="si">}</span>/privkey.pem<span class="k">)</span><span class="s2">&quot;</span> &gt;&gt; .env
 </code></pre></div>
